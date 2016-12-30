@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "com.rxjava2.android.samples"
@@ -10,12 +10,27 @@ android {
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
+
+        //在不用 retrolambda 使用jack 编译器 是不支持instant run
+        jackOptions {//enable java8 feature
+            enabled true
+        }
+
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+    }
+
+
+
+    //rx java 建议jdk 1.8 引入 lambda
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

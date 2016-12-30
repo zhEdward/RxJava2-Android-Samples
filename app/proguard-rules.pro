@@ -15,3 +15,5 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+#保证rxjava2 相关核心类不被混淆
+-dontwarn java.lang.invoke.*
