@@ -43,6 +43,7 @@ public class PublishSubjectExample extends AppCompatActivity {
      */
     private void doSomeWork() {
 
+
         PublishSubject<Integer> source = PublishSubject.create();
 
         source.subscribe(getFirstObserver()); // it will get 1, 2, 3, 4 and onComplete
@@ -52,6 +53,7 @@ public class PublishSubjectExample extends AppCompatActivity {
         source.onNext(3);
 
         /*
+        PublishSubject只会把在订阅发生的时间点之后来自原始Observable的数据发射给观察者
          * it will emit 4 and onComplete for second observer also.
          */
         source.subscribe(getSecondObserver());

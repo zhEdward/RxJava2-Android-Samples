@@ -19,7 +19,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.BiFunction;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -27,21 +26,21 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class ZipExampleActivity extends AppCompatActivity {
 
-    private static final String TAG = ZipExampleActivity.class.getSimpleName();
+    private static final String TAG = ZipExampleActivity.class.getSimpleName ();
     Button btn;
     TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_example);
-        btn = (Button) findViewById(R.id.btn);
-        textView = (TextView) findViewById(R.id.textView);
+        super.onCreate (savedInstanceState);
+        setContentView (R.layout.activity_example);
+        btn = (Button) findViewById (R.id.btn);
+        textView = (TextView) findViewById (R.id.textView);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View view) {
-                doSomeWork();
+                doSomeWork ();
             }
         });
     }
@@ -53,75 +52,83 @@ public class ZipExampleActivity extends AppCompatActivity {
     * Then we are finding the list of users who loves both
     */
     private void doSomeWork() {
-        Observable.zip(getCricketFansObservable(), getFootballFansObservable(),
-                new BiFunction<List<User>, List<User>, List<User>>() {
-                    @Override
-                    public List<User> apply(List<User> cricketFans, List<User> footballFans) throws Exception {
-                        return Utils.filterUserWhoLovesBoth(cricketFans, footballFans);
-                    }
-                })
+        Observable.zip (getCricketFansObservable (), getFootballFansObservable (),
+                //                new BiFunction<List<User>, List<User>, List<User>>() {
+                //                    @Override
+                //                    public List<User> apply(List<User> cricketFans, List<User> footballFans) throws Exception {
+                //                        return Utils.filterUserWhoLovesBoth(cricketFans, footballFans);
+                //                    }
+                //                })
+                (cricketFans, footballFans) -> Utils.filterUserWhoLovesBoth (cricketFans, footballFans)//lambda syntax
+        )
                 // Run on a background thread
-                .subscribeOn(Schedulers.io())
+                .subscribeOn (Schedulers.io ())
                 // Be notified on the main thread
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getObserver());
+                .observeOn (AndroidSchedulers.mainThread ()).subscribe (getObserver ());
+
+
     }
 
     private Observable<List<User>> getCricketFansObservable() {
-        return Observable.create(new ObservableOnSubscribe<List<User>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<User>> e) throws Exception {
-                if (!e.isDisposed()) {
-                    e.onNext(Utils.getUserListWhoLovesCricket());
-                    e.onComplete();
-                }
-            }
-        });
+        //        return Observable.create(new ObservableOnSubscribe<List<User>>() {
+        //            @Override
+        //            public void subscribe(ObservableEmitter<List<User>> e) throws Exception {
+        //                if (!e.isDisposed()) {
+        //                    e.onNext(Utils.getUserListWhoLovesCricket());
+        //                    e.onComplete();
+        //                }
+        //            }
+        //        });
+
+        return Observable.fromArray (Utils.getUserListWhoLovesCricket ());
+
+        //return Observable.just ();
     }
 
     private Observable<List<User>> getFootballFansObservable() {
-        return Observable.create(new ObservableOnSubscribe<List<User>>() {
+        return Observable.create (new ObservableOnSubscribe<List<User>> () {
             @Override
             public void subscribe(ObservableEmitter<List<User>> e) throws Exception {
-                if (!e.isDisposed()) {
-                    e.onNext(Utils.getUserListWhoLovesFootball());
-                    e.onComplete();
+                if (!e.isDisposed ()) {
+                    e.onNext (Utils.getUserListWhoLovesFootball ());
+                    e.onComplete ();
                 }
             }
         });
     }
 
     private Observer<List<User>> getObserver() {
-        return new Observer<List<User>>() {
+
+        return new Observer<List<User>> () {
 
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(TAG, " onSubscribe : " + d.isDisposed());
+                Log.d (TAG, " onSubscribe : " + d.isDisposed ());
             }
 
             @Override
             public void onNext(List<User> userList) {
-                textView.append(" onNext");
-                textView.append(AppConstant.LINE_SEPARATOR);
+                textView.append (" onNext");
+                textView.append (AppConstant.LINE_SEPARATOR);
                 for (User user : userList) {
-                    textView.append(" firstName : " + user.firstName);
-                    textView.append(AppConstant.LINE_SEPARATOR);
+                    textView.append (" firstName : " + user.firstName);
+                    textView.append (AppConstant.LINE_SEPARATOR);
                 }
-                Log.d(TAG, " onNext : " + userList.size());
+                Log.d (TAG, " onNext : " + userList.size ());
             }
 
             @Override
             public void onError(Throwable e) {
-                textView.append(" onError : " + e.getMessage());
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onError : " + e.getMessage());
+                textView.append (" onError : " + e.getMessage ());
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onError : " + e.getMessage ());
             }
 
             @Override
             public void onComplete() {
-                textView.append(" onComplete");
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onComplete");
+                textView.append (" onComplete");
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onComplete");
             }
         };
     }

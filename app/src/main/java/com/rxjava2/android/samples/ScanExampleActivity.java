@@ -44,7 +44,8 @@ public class ScanExampleActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 // Be notified on the main thread
                 .observeOn(AndroidSchedulers.mainThread())
-                .scan(new BiFunction<Integer, Integer, Integer>() {
+                //TODO 和 reduce 操作符类似
+                .scan (-10, new BiFunction<Integer, Integer, Integer> () {
                     @Override
                     public Integer apply(Integer int1, Integer int2) throws Exception {
                         return int1 + int2;

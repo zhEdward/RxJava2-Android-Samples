@@ -15,6 +15,9 @@ import io.reactivex.subjects.ReplaySubject;
 
 /**
  * Created by amitshekhar on 17/12/16.
+ *
+ * 定义一个 relayObservables  多个 observer在不同时间段进行订阅 都会收到完整的 发送items
+ *
  */
 
 public class ReplaySubjectExample extends AppCompatActivity {
@@ -45,82 +48,60 @@ public class ReplaySubjectExample extends AppCompatActivity {
 
         ReplaySubject<Integer> source = ReplaySubject.create();
 
-        source.subscribe(getFirstObserver()); // it will get 1, 2, 3, 4
+        source.subscribe (getObserver ("First")); // it will get 1, 2, 3, 4
 
         source.onNext(1);
         source.onNext(2);
-        source.onNext(3);
-        source.onNext(4);
-        source.onComplete();
+
+
 
         /*
-         * it will emit 1, 2, 3, 4 for second observer also as we have used replay
+         * 当订阅后 立刻收到 之前已经发送过的1，2
+         * 后续还会收到 3，4
          */
-        source.subscribe(getSecondObserver());
+        source.subscribe (getObserver ("Second"));
+
+        source.onNext (3);
+        source.onNext (4);
+
+        source.onComplete ();
+
+        //再次订阅的observer 由于 onCompleted已经完成 所以也将一次性收到 1，2，3，4
+        source.subscribe (getObserver ("Third"));
+
+
+
 
     }
 
 
-    private Observer<Integer> getFirstObserver() {
+    private Observer<Integer> getObserver(String index) {
         return new Observer<Integer>() {
 
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(TAG, " First onSubscribe : " + d.isDisposed());
+                Log.d (TAG, index + "  onSubscribe : " + d.isDisposed ());
             }
 
             @Override
             public void onNext(Integer value) {
-                textView.append(" First onNext : value : " + value);
+                textView.append (index + " onNext : value : " + value);
                 textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onNext value : " + value);
+                Log.d (TAG, index + "  onNext value : " + value);
             }
 
             @Override
             public void onError(Throwable e) {
-                textView.append(" First onError : " + e.getMessage());
+                textView.append (index + " onError : " + e.getMessage ());
                 textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onError : " + e.getMessage());
+                Log.d (TAG, index + "onError : " + e.getMessage ());
             }
 
             @Override
             public void onComplete() {
-                textView.append(" First onComplete");
+                textView.append (index + " onComplete");
                 textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onComplete");
-            }
-        };
-    }
-
-    private Observer<Integer> getSecondObserver() {
-        return new Observer<Integer>() {
-
-            @Override
-            public void onSubscribe(Disposable d) {
-                textView.append(" Second onSubscribe : isDisposed :" + d.isDisposed());
-                Log.d(TAG, " Second onSubscribe : " + d.isDisposed());
-                textView.append(AppConstant.LINE_SEPARATOR);
-            }
-
-            @Override
-            public void onNext(Integer value) {
-                textView.append(" Second onNext : value : " + value);
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " Second onNext value : " + value);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                textView.append(" Second onError : " + e.getMessage());
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " Second onError : " + e.getMessage());
-            }
-
-            @Override
-            public void onComplete() {
-                textView.append(" Second onComplete");
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " Second onComplete");
+                Log.d (TAG, index + "onComplete");
             }
         };
     }

@@ -47,13 +47,12 @@ public class TakeExampleActivity extends AppCompatActivity {
                 // Run on a background thread
                 .subscribeOn(Schedulers.io())
                 // Be notified on the main thread
-                .observeOn(AndroidSchedulers.mainThread())
-                .take(3)
+                .observeOn (AndroidSchedulers.mainThread ()).take (3).skip (3)//注意 操作符是有先手顺序 skip->take 语法正确 take-> skip 语法错误
                 .subscribe(getObserver());
     }
 
     private Observable<Integer> getObservable() {
-        return Observable.just(1, 2, 3, 4, 5);
+        return Observable.just (1, 2, 3, 4, 5, 6);
     }
 
     private Observer<Integer> getObserver() {

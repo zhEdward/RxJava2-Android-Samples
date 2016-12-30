@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.rxjava2.android.samples.utils.AppConstant;
 
+import java.util.concurrent.Callable;
+
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -19,21 +21,21 @@ import io.reactivex.functions.BiFunction;
  */
 public class ReduceExampleActivity extends AppCompatActivity {
 
-    private static final String TAG = ReduceExampleActivity.class.getSimpleName();
+    private static final String TAG = ReduceExampleActivity.class.getSimpleName ();
     Button btn;
     TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_example);
-        btn = (Button) findViewById(R.id.btn);
-        textView = (TextView) findViewById(R.id.textView);
+        super.onCreate (savedInstanceState);
+        setContentView (R.layout.activity_example);
+        btn = (Button) findViewById (R.id.btn);
+        textView = (TextView) findViewById (R.id.textView);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View view) {
-                doSomeWork();
+                doSomeWork ();
             }
         });
     }
@@ -42,46 +44,54 @@ public class ReduceExampleActivity extends AppCompatActivity {
      * simple example using reduce to add all the number
      */
     private void doSomeWork() {
-        getObservable()
-                .reduce(new BiFunction<Integer, Integer, Integer>() {
-                    @Override
-                    public Integer apply(Integer t1, Integer t2) {
-                        return t1 + t2;
-                    }
-                })
-                .subscribe(getObserver());
+
+        getObservable ().reduce (new BiFunction<Integer, Integer, Integer> () {
+            @Override
+            public Integer apply(Integer t1, Integer t2) throws Exception {
+                return t1 + t2;
+            }
+        }).subscribe (getObserver ());//
+
+        getObservable ().reduceWith (new Callable<Integer> () {
+            @Override
+            public Integer call() throws Exception {
+                //种子提供器（可以自定义是）
+                //"123".substring (10);
+                return 100;
+            }
+        }, (i1, i2) -> i1 + i2).subscribe (i -> Log.i (TAG, "single onSuccess: " + i), e -> Log.e (TAG, "signle err: ", e));
     }
 
     private Observable<Integer> getObservable() {
-        return Observable.just(1, 2, 3, 4);
+        return Observable.just (1, 2, 3, 4);
     }
 
     private MaybeObserver<Integer> getObserver() {
-        return new MaybeObserver<Integer>() {
+        return new MaybeObserver<Integer> () {
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(TAG, " onSubscribe : " + d.isDisposed());
+                Log.d (TAG, " onSubscribe : " + d.isDisposed ());
             }
 
             @Override
             public void onSuccess(Integer value) {
-                textView.append(" onSuccess : value : " + value);
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onSuccess : value : " + value);
+                textView.append (" onSuccess : value : " + value);
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onSuccess : value : " + value);
             }
 
             @Override
             public void onError(Throwable e) {
-                textView.append(" onError : " + e.getMessage());
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onError : " + e.getMessage());
+                textView.append (" onError : " + e.getMessage ());
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onError : " + e.getMessage ());
             }
 
             @Override
             public void onComplete() {
-                textView.append(" onComplete");
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onComplete");
+                textView.append (" onComplete");
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onComplete");
             }
         };
     }

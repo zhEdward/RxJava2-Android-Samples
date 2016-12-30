@@ -11,10 +11,12 @@ import com.rxjava2.android.samples.utils.AppConstant;
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.ResourceObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -62,11 +64,38 @@ public class IntervalExampleActivity extends AppCompatActivity {
     }
 
     private Observable<? extends Long> getObservable() {
-        return Observable.interval(0, 2, TimeUnit.SECONDS);
+        Flowable flowable = Flowable.interval (0, 2, TimeUnit.SECONDS);
+
+        return Observable.interval (0, 2, TimeUnit.SECONDS);//每个2s emit one item per 2s
     }
 
+
     private DisposableObserver<Long> getObserver() {
+        ResourceObserver resc = new ResourceObserver () {
+
+            @Override
+            protected void onStart() {
+                super.onStart ();
+            }
+
+            @Override
+            public void onNext(Object value) {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
         return new DisposableObserver<Long>() {
+
 
             @Override
             public void onNext(Long value) {

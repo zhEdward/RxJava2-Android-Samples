@@ -51,35 +51,39 @@ public class DeferExampleActivity extends AppCompatActivity {
                               // we will get the brand as BMW.
                               // If we had not used defer, we would have got null as the brand.
 
-        brandDeferObservable
-                .subscribe(getObserver());
+        //直到有观察者订阅时（或者每次订阅）才创建Observable，并且为每个（新的observer）观察者创建一个新的Observable
+        brandDeferObservable.subscribe (getObserver (1));
+
+        car.setBrand ("one 77");
+
+        brandDeferObservable.subscribe (getObserver (2));//car brand has change to 'one 77'
     }
 
-    private Observer<String> getObserver() {
+    private Observer<String> getObserver(int index) {
         return new Observer<String>() {
 
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(TAG, " onSubscribe : " + d.isDisposed());
+                Log.d (TAG, index + "、 onSubscribe : " + d.isDisposed ());
             }
 
             @Override
             public void onNext(String value) {
-                textView.append(" onNext : value : " + value);
+                textView.append (index + "？ onNext : value : " + value);
                 textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onNext : value : " + value);
+                Log.d (TAG, " : value : " + value);
             }
 
             @Override
             public void onError(Throwable e) {
-                textView.append(" onError : " + e.getMessage());
+                textView.append (index + " onError : " + e.getMessage ());
                 textView.append(AppConstant.LINE_SEPARATOR);
                 Log.d(TAG, " onError : " + e.getMessage());
             }
 
             @Override
             public void onComplete() {
-                textView.append(" onComplete");
+                textView.append (index + "、 onComplete");
                 textView.append(AppConstant.LINE_SEPARATOR);
                 Log.d(TAG, " onComplete");
             }

@@ -51,6 +51,7 @@ public class ThrottleLastExampleActivity extends AppCompatActivity {
     */
     private void doSomeWork() {
         getObservable()
+                //每500ms 一次 定时节流操作，并发送本次 节流中 最后一个数据
                 .throttleLast(500, TimeUnit.MILLISECONDS)
                 // Run on a background thread
                 .subscribeOn(Schedulers.io())
@@ -63,21 +64,42 @@ public class ThrottleLastExampleActivity extends AppCompatActivity {
         return Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                textView.setText ("");
+
                 // send events with simulated time wait
-                Thread.sleep(0);
+                //                Thread.sleep(0);
+                //                emitter.onNext(1); // skip
+                //                emitter.onNext(2); // deliver
+                //                Thread.sleep(505);
+                //                emitter.onNext(3); // skip
+                //                Thread.sleep(99);
+                //                emitter.onNext(4); // skip
+                //                Thread.sleep(100);
+                //                emitter.onNext(5); // skip
+                //                emitter.onNext(6); // deliver
+                //                Thread.sleep(305);
+                //                emitter.onNext(7); // deliver
+                //                Thread.sleep(510);
+
+
                 emitter.onNext(1); // skip
-                emitter.onNext(2); // deliver
+                Thread.sleep (400);
+                emitter.onNext (2);
+                emitter.onNext (3); // deliver
                 Thread.sleep(505);
-                emitter.onNext(3); // skip
-                Thread.sleep(99);
                 emitter.onNext(4); // skip
                 Thread.sleep(100);
                 emitter.onNext(5); // skip
-                emitter.onNext(6); // deliver
-                Thread.sleep(305);
+                emitter.onNext (6); // skip
                 emitter.onNext(7); // deliver
+                Thread.sleep (605);
+                emitter.onNext (8); // deliver
                 Thread.sleep(510);
+
+
                 emitter.onComplete();
+
+
             }
         });
     }

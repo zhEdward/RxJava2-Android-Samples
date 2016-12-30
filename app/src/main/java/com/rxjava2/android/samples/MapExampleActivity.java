@@ -15,8 +15,6 @@ import com.rxjava2.android.samples.utils.Utils;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -26,8 +24,9 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by amitshekhar on 27/08/16.
  */
-public class MapExampleActivity extends AppCompatActivity {
 
+public class MapExampleActivity extends AppCompatActivity {
+    // FIXME: 2016/12/29
     private static final String TAG = MapExampleActivity.class.getSimpleName();
     Button btn;
     TextView textView;
@@ -70,15 +69,22 @@ public class MapExampleActivity extends AppCompatActivity {
     }
 
     private Observable<List<ApiUser>> getObservable() {
-        return Observable.create(new ObservableOnSubscribe<List<ApiUser>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<ApiUser>> e) throws Exception {
-                if (!e.isDisposed()) {
-                    e.onNext(Utils.getApiUserList());
-                    e.onComplete();
-                }
-            }
-        });
+        //        return Observable.create(new ObservableOnSubscribe<List<ApiUser>>() {
+        //            @Override
+        //            public void subscribe(ObservableEmitter<List<ApiUser>> e) throws Exception {
+        //                if (!e.isDisposed()) {
+        //                    e.onNext(Utils.getApiUserList());
+        //                    e.onComplete();
+        //                }
+        //            }
+        //        });
+
+
+        return Observable.just (Utils.getApiUserList ());
+
+
+
+
     }
 
     private Observer<List<User>> getObserver() {
@@ -87,6 +93,7 @@ public class MapExampleActivity extends AppCompatActivity {
             @Override
             public void onSubscribe(Disposable d) {
                 Log.d(TAG, " onSubscribe : " + d.isDisposed());
+                //d.dispose ();用于关闭 不支持backpressure的 对象
             }
 
             @Override
@@ -94,7 +101,7 @@ public class MapExampleActivity extends AppCompatActivity {
                 textView.append(" onNext");
                 textView.append(AppConstant.LINE_SEPARATOR);
                 for (User user : userList) {
-                    textView.append(" firstName : " + user.firstName);
+                    textView.append (" firstName : " + user.firstName + ",lastName:" + user.lastName);
                     textView.append(AppConstant.LINE_SEPARATOR);
                 }
                 Log.d(TAG, " onNext : " + userList.size());

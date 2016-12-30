@@ -47,54 +47,63 @@ public class ReplayExampleActivity extends AppCompatActivity {
         ConnectableObservable<Integer> connectableObservable = source.replay(3); // bufferSize = 3 to retain 3 values to replay
         connectableObservable.connect(); // connecting the connectableObservable
 
-        connectableObservable.subscribe(getFirstObserver());
+        connectableObservable.subscribe (getObserver ("First"));
 
+        textView.setText ("");
         source.onNext(1);
         source.onNext(2);
         source.onNext(3);
         source.onNext(4);
-        source.onComplete();
+
 
         /*
          * it will emit 2, 3, 4 as (count = 3), retains the 3 values for replay
          */
-        connectableObservable.subscribe(getSecondObserver());
+        connectableObservable.subscribe (getObserver ("Second"));
+
+        source.onNext (5);
+        source.onComplete ();
+
+        //当 源observables 发送完毕(mean onCompleted be call ） 后注册的observer 将被只能收到 relay buffer 长度的 数据
+        connectableObservable.subscribe (getObserver ("Third"));
 
     }
 
 
-    private Observer<Integer> getFirstObserver() {
+    private Observer<Integer> getObserver(String tag) {
         return new Observer<Integer>() {
 
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(TAG, " First onSubscribe : " + d.isDisposed());
+                Log.d (TAG, tag + " onSubscribe : " + d.isDisposed ());
             }
 
             @Override
             public void onNext(Integer value) {
-                textView.append(" First onNext : value : " + value);
+                textView.append (tag + "  onNext : value : " + value);
                 textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onNext value : " + value);
+                Log.d (TAG, tag + "  onNext value : " + value);
             }
 
             @Override
             public void onError(Throwable e) {
-                textView.append(" First onError : " + e.getMessage());
+                textView.append (tag + "  onError : " + e.getMessage ());
                 textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onError : " + e.getMessage());
+                Log.d (TAG, tag + "  onError : " + e.getMessage ());
             }
 
             @Override
             public void onComplete() {
-                textView.append(" First onComplete");
+                textView.append (tag + " onComplete");
                 textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onComplete");
+                Log.d (TAG, tag + " onComplete");
             }
         };
     }
 
+    @Deprecated
     private Observer<Integer> getSecondObserver() {
+        //replay 的buffer=3 只缓存 当前最新的三个item data
         return new Observer<Integer>() {
 
             @Override

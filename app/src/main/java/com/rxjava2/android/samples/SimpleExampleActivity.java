@@ -17,24 +17,27 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by amitshekhar on 27/08/16.
+ *
+ * 
  */
 public class SimpleExampleActivity extends AppCompatActivity {
 
-    private static final String TAG = SimpleExampleActivity.class.getSimpleName();
+    // FIXME: 2016/12/29  已阅
+    private static final String TAG = SimpleExampleActivity.class.getSimpleName ();
     Button btn;
     TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_example);
-        btn = (Button) findViewById(R.id.btn);
-        textView = (TextView) findViewById(R.id.textView);
+        super.onCreate (savedInstanceState);
+        setContentView (R.layout.activity_example);
+        btn = (Button) findViewById (R.id.btn);
+        textView = (TextView) findViewById (R.id.textView);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View view) {
-                doSomeWork();
+                doSomeWork ();
             }
         });
     }
@@ -43,45 +46,44 @@ public class SimpleExampleActivity extends AppCompatActivity {
      * simple example to emit two value one by one
      */
     private void doSomeWork() {
-        getObservable()
+        getObservable ()
                 // Run on a background thread
-                .subscribeOn(Schedulers.io())
+                .subscribeOn (Schedulers.io ())
                 // Be notified on the main thread
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getObserver());
+                .observeOn (AndroidSchedulers.mainThread ()).map (s -> s + "10086").subscribe (getObserver ());
     }
 
     private Observable<String> getObservable() {
-        return Observable.just("Cricket", "Football");
+        return Observable.just ("Cricket", "Football");
     }
 
     private Observer<String> getObserver() {
-        return new Observer<String>() {
+        return new Observer<String> () {
 
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(TAG, " onSubscribe : " + d.isDisposed());
+                Log.d (TAG, " onSubscribe : " + d.isDisposed ());
             }
 
             @Override
             public void onNext(String value) {
-                textView.append(" onNext : value : " + value);
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onNext : value : " + value);
+                textView.append (" onNext : value : " + value);
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onNext : value : " + value);
             }
 
             @Override
             public void onError(Throwable e) {
-                textView.append(" onError : " + e.getMessage());
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onError : " + e.getMessage());
+                textView.append (" onError : " + e.getMessage ());
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onError : " + e.getMessage ());
             }
 
             @Override
             public void onComplete() {
-                textView.append(" onComplete");
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " onComplete");
+                textView.append (" onComplete");
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onComplete");
             }
         };
     }

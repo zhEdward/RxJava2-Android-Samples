@@ -10,12 +10,17 @@ import android.widget.TextView;
 
 import com.rxjava2.android.samples.utils.AppConstant;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -42,6 +47,59 @@ public class DisposableExampleActivity extends AppCompatActivity {
                 doSomeWork();
             }
         });
+
+
+        //use with flowerbale
+        Subscriber subscriber = new Subscriber () {
+
+            Subscription sub;
+
+            @Override
+            public void onSubscribe(Subscription s) {
+                sub = s;
+                s.request (1);
+            }
+
+            @Override
+            public void onNext(Object o) {
+                //do some job and pull request new event
+                sub.request (1);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
+        //use with observables
+        Observer observer = new Observer () {
+            @Override
+            public void onSubscribe(Disposable d) {
+                d.isDisposed ();
+                d.dispose ();
+            }
+
+            @Override
+            public void onNext(Object value) {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
     }
 
     @Override
@@ -55,33 +113,48 @@ public class DisposableExampleActivity extends AppCompatActivity {
      * disposables is cleared in onDestroy of this activity.
      */
     void doSomeWork() {
-        disposables.add(sampleObservable()
+
+        disposables.add (sampleObservable ()
                 // Run on a background thread
-                .subscribeOn(Schedulers.io())
+                .subscribeOn (Schedulers.io ())
                 // Be notified on the main thread
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<String>() {
-                    @Override
-                    public void onComplete() {
-                        textView.append(" onComplete");
-                        textView.append(AppConstant.LINE_SEPARATOR);
-                        Log.d(TAG, " onComplete");
-                    }
+                .observeOn (AndroidSchedulers.mainThread ())
+                //通过subscribeWith 操作符 把每个响应式对对象放入统一管理list中
+                // TODO: 2016/12/30 把 disposeSubscribe 单独拆分 method 使用 lambda调用 的方式??? [this::getObserver]
+                .subscribeWith (getObserver ()));
 
-                    @Override
-                    public void onError(Throwable e) {
-                        textView.append(" onError : " + e.getMessage());
-                        textView.append(AppConstant.LINE_SEPARATOR);
-                        Log.d(TAG, " onError : " + e.getMessage());
-                    }
 
-                    @Override
-                    public void onNext(String value) {
-                        textView.append(" onNext : value : " + value);
-                        textView.append(AppConstant.LINE_SEPARATOR);
-                        Log.d(TAG, " onNext value : " + value);
-                    }
-                }));
+        //String s =String::valueOf;
+
+        // Thread t =Thread::new;
+
+
+    }
+
+
+    public DisposableObserver<String> getObserver() {
+        return new DisposableObserver<String> () {
+            @Override
+            public void onComplete() {
+                textView.append (" onComplete");
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onComplete");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                textView.append (" onError : " + e.getMessage ());
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onError : " + e.getMessage ());
+            }
+
+            @Override
+            public void onNext(String value) {
+                textView.append (" onNext : value : " + value);
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " onNext value : " + value);
+            }
+        };
     }
 
     static Observable<String> sampleObservable() {
