@@ -45,6 +45,8 @@ public class CompletableObserverActivity extends AppCompatActivity {
      * simple example using CompletableObserver
      */
     private void doSomeWork() {
+        //延时2s 触发 observer 的 onComplete onError
+        // TODO: 2016/12/29 这种类型的使用场景是什么？
         Completable completable = Completable.timer(1000, TimeUnit.MILLISECONDS);
 
         completable

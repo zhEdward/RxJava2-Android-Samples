@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import com.rxjava2.android.samples.utils.AppConstant;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -44,7 +46,17 @@ public class BufferExampleActivity extends AppCompatActivity {
      */
     private void doSomeWork() {
 
-        Observable<List<String>> buffered = getObservable().buffer(3, 1);
+        //每次发射 最大3个，每次发射 就把前一次发射中 item 在 源是observables中index位置 skip 2个 在对接下来的(1-3)个进行打包
+        Observable<List<String>> buffered = getObservable ().buffer (3, 2, new Callable<List<String>> () {
+            @Override
+            public List<String> call() throws Exception {
+
+                return new ArrayList<String> ();
+            }
+        });
+
+
+
 
         // 3 means,  it takes max of three from its start index and create list
         // 1 means, it jumps one step every time
@@ -59,7 +71,7 @@ public class BufferExampleActivity extends AppCompatActivity {
     }
 
     private Observable<String> getObservable() {
-        return Observable.just("one", "two", "three", "four", "five");
+        return Observable.just ("one", "two", "three", "four", "five", "six");
     }
 
     private Observer<List<String>> getObserver() {

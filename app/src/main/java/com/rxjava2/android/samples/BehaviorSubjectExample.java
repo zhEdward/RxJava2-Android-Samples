@@ -19,21 +19,21 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class BehaviorSubjectExample extends AppCompatActivity {
 
-    private static final String TAG = BehaviorSubjectExample.class.getSimpleName();
+    private static final String TAG = BehaviorSubjectExample.class.getSimpleName ();
     Button btn;
     TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_example);
-        btn = (Button) findViewById(R.id.btn);
-        textView = (TextView) findViewById(R.id.textView);
+        super.onCreate (savedInstanceState);
+        setContentView (R.layout.activity_example);
+        btn = (Button) findViewById (R.id.btn);
+        textView = (TextView) findViewById (R.id.textView);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View view) {
-                doSomeWork();
+                doSomeWork ();
             }
         });
     }
@@ -44,85 +44,89 @@ public class BehaviorSubjectExample extends AppCompatActivity {
      */
     private void doSomeWork() {
 
-        BehaviorSubject<Integer> source = BehaviorSubject.create();
+        BehaviorSubject<Integer> source = BehaviorSubject.create ();
 
-        source.subscribe(getFirstObserver()); // it will get 1, 2, 3, 4 and onComplete
+        source.subscribe (getFirstObserver ()); // it will get 1, 2, 3, 4 and onComplete
 
-        source.onNext(1);
-        source.onNext(2);
-        source.onNext(3);
+        source.onNext (1);
+        source.onNext (2);
+        source.onNext (3);
 
         /*
          * it will emit 3(last emitted), 4 and onComplete for second observer also.
+         * 当观察者订阅BehaviorSubject时，它开始发射原始Observable最近发射的数据（ 如果此时还
+         * 没有收到任何数据，它会发射一个默认值） ，然后继续发射其它任何来自原始Observable的
+         * 数据
+         *
          */
-        source.subscribe(getSecondObserver());
+        source.subscribe (getSecondObserver ());
 
-        source.onNext(4);
-        source.onComplete();
+        source.onNext (4);
+        source.onComplete ();
 
     }
 
 
     private Observer<Integer> getFirstObserver() {
-        return new Observer<Integer>() {
+        return new Observer<Integer> () {
 
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(TAG, " First onSubscribe : " + d.isDisposed());
+                Log.d (TAG, " First onSubscribe : " + d.isDisposed ());
             }
 
             @Override
             public void onNext(Integer value) {
-                textView.append(" First onNext : value : " + value);
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onNext value : " + value);
+                textView.append (" First onNext : value : " + value);
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " First onNext value : " + value);
             }
 
             @Override
             public void onError(Throwable e) {
-                textView.append(" First onError : " + e.getMessage());
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onError : " + e.getMessage());
+                textView.append (" First onError : " + e.getMessage ());
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " First onError : " + e.getMessage ());
             }
 
             @Override
             public void onComplete() {
-                textView.append(" First onComplete");
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " First onComplete");
+                textView.append (" First onComplete");
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " First onComplete");
             }
         };
     }
 
     private Observer<Integer> getSecondObserver() {
-        return new Observer<Integer>() {
+        return new Observer<Integer> () {
 
             @Override
             public void onSubscribe(Disposable d) {
-                textView.append(" Second onSubscribe : isDisposed :" + d.isDisposed());
-                Log.d(TAG, " Second onSubscribe : " + d.isDisposed());
-                textView.append(AppConstant.LINE_SEPARATOR);
+                textView.append (" Second onSubscribe : isDisposed :" + d.isDisposed ());
+                Log.d (TAG, " Second onSubscribe : " + d.isDisposed ());
+                textView.append (AppConstant.LINE_SEPARATOR);
             }
 
             @Override
             public void onNext(Integer value) {
-                textView.append(" Second onNext : value : " + value);
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " Second onNext value : " + value);
+                textView.append (" Second onNext : value : " + value);
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " Second onNext value : " + value);
             }
 
             @Override
             public void onError(Throwable e) {
-                textView.append(" Second onError : " + e.getMessage());
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " Second onError : " + e.getMessage());
+                textView.append (" Second onError : " + e.getMessage ());
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " Second onError : " + e.getMessage ());
             }
 
             @Override
             public void onComplete() {
-                textView.append(" Second onComplete");
-                textView.append(AppConstant.LINE_SEPARATOR);
-                Log.d(TAG, " Second onComplete");
+                textView.append (" Second onComplete");
+                textView.append (AppConstant.LINE_SEPARATOR);
+                Log.d (TAG, " Second onComplete");
             }
         };
     }
