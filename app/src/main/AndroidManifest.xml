@@ -79,18 +79,11 @@
         <activity
             android:name=".LastOperatorExampleActivity"
             android:label="@string/distinct" />
+
         <activity
-            android:name=".ReplaySubjectExample"
-            android:label="@string/replay_subject" />
-        <activity
-            android:name=".PublishSubjectExample"
-            android:label="@string/publish_subject" />
-        <activity
-            android:name=".BehaviorSubjectExample"
-            android:label="@string/behavior_subject" />
-        <activity
-            android:name=".AsyncSubjectExample"
-            android:label="@string/async_subject" />
+            android:name=".SubjectExample"
+            android:label="@string/subject"/>
+
         <activity
             android:name=".ThrottleLastExampleActivity"
             android:label="@string/throttle_last" />

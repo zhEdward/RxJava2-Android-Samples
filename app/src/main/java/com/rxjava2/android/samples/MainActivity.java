@@ -97,21 +97,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, LastOperatorExampleActivity.class));
     }
 
-    public void startReplaySubjectActivity(View view) {
-        startActivity(new Intent(MainActivity.this, ReplaySubjectExample.class));
+    public void startSubjectActivity(View v) {
+        startActivity (new Intent (MainActivity.this, SubjectExample.class));
     }
 
-    public void startPublishSubjectActivity(View view) {
-        startActivity(new Intent(MainActivity.this, PublishSubjectExample.class));
-    }
 
-    public void startBehaviorSubjectActivity(View view) {
-        startActivity(new Intent(MainActivity.this, BehaviorSubjectExample.class));
-    }
-
-    public void startAsyncSubjectActivity(View view) {
-        startActivity(new Intent(MainActivity.this, AsyncSubjectExample.class));
-    }
 
     public void startThrottleLastActivity(View view) {
         startActivity(new Intent(MainActivity.this, ThrottleLastExampleActivity.class));

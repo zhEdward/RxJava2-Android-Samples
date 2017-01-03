@@ -40,5 +40,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'io.reactivex.rxjava2:rxjava:2.0.2'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'com.jakewharton:butterknife:8.1.0'
+
+    //除了添依赖库 还需要添加 特定注解处理器
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

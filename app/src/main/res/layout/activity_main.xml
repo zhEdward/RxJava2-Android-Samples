@@ -165,6 +165,14 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="startSubjectActivity"
+            android:text="@string/subject"
+            android:textColor="@android:color/black"/>
+
+
+        <!--<Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:onClick="startReplaySubjectActivity"
             android:text="@string/replay_subject"
             android:textColor="@android:color/black" />
@@ -188,7 +196,7 @@
             android:layout_height="wrap_content"
             android:onClick="startAsyncSubjectActivity"
             android:text="@string/async_subject"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black" />-->
 
         <Button
             android:layout_width="match_parent"
