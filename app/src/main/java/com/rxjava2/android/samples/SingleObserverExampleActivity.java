@@ -13,6 +13,11 @@ import com.rxjava2.android.samples.utils.Utils;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
@@ -27,7 +32,10 @@ import io.reactivex.observers.ResourceCompletableObserver;
 import io.reactivex.observers.ResourceMaybeObserver;
 import io.reactivex.observers.ResourceObserver;
 import io.reactivex.observers.ResourceSingleObserver;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.ResourceSubscriber;
+import io.reactivex.subscribers.TestSubscriber;
 
 /**
  * Created by amitshekhar on 27/08/16.
@@ -36,13 +44,18 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
 
     private static final String TAG = SingleObserverExampleActivity.class.getSimpleName ();
     Button btn;
+    @BindView(R.id.btn2)
+    Button btn2;
+    @BindView(R.id.btn3)
+    Button btn3;
     TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_example);
-        btn = (Button) findViewById (R.id.btn);
+        setContentView (R.layout.single_activity_example);
+        ButterKnife.bind (this);
+        btn = (Button) findViewById (R.id.btn1);
         textView = (TextView) findViewById (R.id.textView);
 
         btn.setOnClickListener (new View.OnClickListener () {
@@ -52,7 +65,8 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
             }
         });
     }
-    CompositeDisposable cd =new CompositeDisposable ();
+
+    CompositeDisposable cd = new CompositeDisposable ();
 
 
     @Override
@@ -67,37 +81,37 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
          */
     private void doSomeWork() {
 
-        Flowable.range(1, 3).subscribe(new Subscriber<Integer>() {
+        Flowable.range (1, 3).subscribe (new Subscriber<Integer> () {
 
             @Override
             public void onSubscribe(Subscription s) {
-                System.out.println("OnSubscribe start");
-                s.request(Long.MAX_VALUE);
-                System.out.println("OnSubscribe end");
+                System.out.println ("OnSubscribe start");
+                s.request (Long.MAX_VALUE);
+                System.out.println ("OnSubscribe end");
             }
 
             @Override
             public void onNext(Integer v) {
-                System.out.println(v);
+                System.out.println (v);
             }
 
             @Override
             public void onError(Throwable e) {
-                e.printStackTrace();
+                e.printStackTrace ();
             }
 
             @Override
             public void onComplete() {
-                System.out.println("Done");
+                System.out.println ("Done");
             }
         });
 
 
-        Single.just ("Amit").subscribe (getSingleObserver ());
+        Single.just ("Amit").subscribeOn (Schedulers.trampoline ()).subscribe (getSingleObserver ());
         //subscribeWith 用于 替代 xx.subscribe() return void
 
-        CompositeDisposable disposable =new CompositeDisposable ();
-        disposable.add (Flowable.just ("Amit","lala","eva","peter","edward").subscribeWith ( new ResourceSubscriber<String> (){
+        CompositeDisposable disposable = new CompositeDisposable ();
+        disposable.add (Flowable.just ("Amit", "lala", "eva", "peter", "edward").subscribeWith (new ResourceSubscriber<String> () {
             /* * print order is:
              * onStart: 1
              * onNext: Amit
@@ -118,7 +132,7 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
 
             @Override
             public void onNext(String value) {
-                Log.i (TAG, "onNext: "+value);
+                Log.i (TAG, "onNext: " + value);
             }
 
             @Override
@@ -133,7 +147,7 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
         }));
 
         //alse for ResourceCompletableObserver,ResourceSingleObserver,ResourceMaybeObserver
-        disposable.add (Observable.range (1,2).subscribeWith (new ResourceObserver<Integer> (){
+        disposable.add (Observable.range (1, 2).subscribeWith (new ResourceObserver<Integer> () {
 
             @Override
             public void onNext(Integer integer) {
@@ -152,13 +166,11 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
         }));
 
 
-
-
         Maybe.just (Utils.getApiUserList ()).subscribe (user -> Log.i (TAG, "doSomeWork: " + user.size ()), err -> {
             Log.e (TAG, "maybe onError: ", err);
         });
 
-        Flowable.just (1,2).subscribe (new Subscriber<Integer> () {
+        Flowable.just (1, 2).subscribe (new Subscriber<Integer> () {
             @Override
             public void onSubscribe(Subscription s) {
                 //通过回调方法进行 flow 注销
@@ -181,11 +193,11 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
             }
         });
 
-        Observable.just (1,2).subscribe (new Observer<Integer> () {
+        Observable.just (1, 2).subscribe (new Observer<Integer> () {
             @Override
             public void onSubscribe(Disposable d) {
                 //通过回调方法进行 flow 注销
-               d.dispose ();
+                d.dispose ();
             }
 
             @Override
@@ -205,7 +217,7 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
         });
 
 
-        ConnectableFlowable connectableFlowable = Flowable.fromArray (1,2,3,4).publish ();
+        ConnectableFlowable connectableFlowable = Flowable.fromArray (1, 2, 3, 4).publish ();
         connectableFlowable.subscribe (new Subscriber () {
             @Override
             public void onSubscribe(Subscription s) {
@@ -215,7 +227,7 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
 
             @Override
             public void onNext(Object o) {
-                Log.i (TAG, "onNext: "+((Integer)o).intValue ());
+                Log.i (TAG, "onNext: " + ((Integer) o).intValue ());
             }
 
             @Override
@@ -229,8 +241,71 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
             }
         });
 
-        cd.add(connectableFlowable.connect ());
+        cd.add (connectableFlowable.connect ());
+    }
 
+    @OnClick({R.id.btn2, R.id.btn3})
+    void buttonClick(View v) {
+        if (v.getId () == R.id.btn2) {
+            List<Integer> list = Flowable.range (1, 100).map (integer -> {
+                Thread.sleep (50);
+                return integer;
+            }).subscribeOn (Schedulers.newThread ()).doOnComplete (() -> Log.i (TAG, "blockingGet SUCCESS")).toList ().blockingGet (); // toList() returns Single
+
+
+            //默认在  main thread 运行
+            Integer i = Flowable.range (1, 50).blockingLast ();//return last item
+
+            Log.i (TAG, "buttonClick: " + list.size () + "," + i.intValue ());
+        } else {
+
+            Flowable.just(1, 2, 3)
+                    .doOnCancel(() -> System.out.println("Cancelled11!"))
+                    .take(2)//will cancel
+                    .subscribe(System.out::println);
+
+            Flowable.just(1, 2, 3)
+                    .doOnCancel(() -> System.out.println("Cancelled22!"))
+                    .subscribe(System.out::println);
+        }
+
+
+    }
+
+    @OnClick(R.id.btn4)
+    void btn4Click() {
+        Flowable.range (1, 10).filter (integer -> (integer % 2 == 0)).test ().assertResult (2, 4, 6, 8, 10);
+
+        TestObserver to;
+        TestSubscriber ts;
+
+//        Observable.intervalRange (1, 50, 1000, 500, TimeUnit.MICROSECONDS, Schedulers.io ())
+//                .map (num -> String.valueOf (num)).subscribe (sNum -> Log.i (TAG, "btn4Click: " + sNum));
+
+
+
+        //prefetch 10
+        Observable.range (1,100).concatMap (integer ->Observable.just ("rank"+integer),10).subscribe (new Observer<String> () {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.i (TAG, "onSubscribe: ");
+            }
+
+            @Override
+            public void onNext(String value) {
+                Log.i (TAG, "onNext: "+value);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                Log.i (TAG, "onComplete: ");
+            }
+        });
 
     }
 
@@ -258,8 +333,8 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
         };
     }
 
-    private Observer xObserves(){
-        new BiConsumer<String,String> (){
+    private Observer xObserves() {
+        new BiConsumer<String, String> () {
 
             @Override
             public void accept(String s, String s2) throws Exception {
@@ -267,7 +342,7 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
             }
         };
 
-        return new Observer<String> (){
+        return new Observer<String> () {
 
             @Override
             public void onSubscribe(Disposable d) {
@@ -291,14 +366,10 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
         };
 
 
-
-
-
-
     }
 
 
-    private ResourceSubscriber<String> getResourceObserver (){
+    private ResourceSubscriber<String> getResourceObserver() {
 
         Subscriber s;
         Observer o;
@@ -310,7 +381,7 @@ public class SingleObserverExampleActivity extends AppCompatActivity {
         ResourceCompletableObserver rc;
 
 
-        new ResourceObserver<String> (){
+        new ResourceObserver<String> () {
 
             @Override
             public void onNext(String value) {
