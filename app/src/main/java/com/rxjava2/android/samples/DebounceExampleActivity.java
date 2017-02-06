@@ -50,7 +50,7 @@ public class DebounceExampleActivity extends AppCompatActivity {
     */
     private void doSomeWork() {
         getObservable()
-                //【前后 items】 发射超过500ms 限速阀值 才 给于当前 发射的itme 通过并发聩给 observer
+                //【前(A)后(B) items】 发射超过间隔超过500ms 限速阀值 才 给于当前 emoit当前(B)item 并发聩给 observer which in subscribeOn()
                 .debounce(500, TimeUnit.MILLISECONDS)
                 // Run on a background thread
                 .subscribeOn(Schedulers.io())
@@ -64,7 +64,8 @@ public class DebounceExampleActivity extends AppCompatActivity {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
                 // send events with simulated time wait
-                emitter.onNext(1); // skip
+
+                emitter.onNext(1); // deliver
                 Thread.sleep(400);
                 emitter.onNext (2);
                 emitter.onNext (3); // deliver

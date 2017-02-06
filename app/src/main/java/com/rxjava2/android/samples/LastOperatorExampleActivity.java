@@ -40,8 +40,8 @@ public class LastOperatorExampleActivity extends AppCompatActivity {
     }
 
     private void doSomeWork() {
-        //如果 源 observables 是empty last操作符 将emit 默认"A1" 给 相关订阅者
-        getObservable().last("A1") // the default item ("A1") to emit if the source ObservableSource is empty
+        //如果 源 observables 是empty last操作符 将emit 默认"A0" 给 相关订阅者
+        getObservable().last("A0") // the default item ("A0") to emit if the source ObservableSource is empty
                 .subscribe(getObserver());
     }
 
