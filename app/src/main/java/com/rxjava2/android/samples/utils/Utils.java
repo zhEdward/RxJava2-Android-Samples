@@ -13,57 +13,64 @@ public class Utils {
 
     public static List<User> getUserList() {
 
-        List<User> userList = new ArrayList<>();
+        List<User> userList = new ArrayList<> ();
 
-        User userOne = new User();
+        User userOne = new User ();
         userOne.firstName = "Amit";
         userOne.lastName = "Shekhar";
-        userList.add(userOne);
+        userList.add (userOne);
 
-        User userTwo = new User();
+        User userTwo = new User ();
         userTwo.firstName = "Manish";
         userTwo.lastName = "Kumar";
-        userList.add(userTwo);
+        userList.add (userTwo);
 
-        User userThree = new User();
+        User userThree = new User ();
         userThree.firstName = "Sumit";
         userThree.lastName = "Kumar";
-        userList.add(userThree);
+        userList.add (userThree);
 
         return userList;
     }
 
     public static List<ApiUser> getApiUserList() {
+        List<ApiUser> apiUserList = new ArrayList<> ();
 
-        List<ApiUser> apiUserList = new ArrayList<>();
+        try {
+            Thread.sleep (5000);
 
-        ApiUser apiUserOne = new ApiUser();
-        apiUserOne.firstName = "Amit";
-        apiUserOne.lastName = "Shekhar";
-        apiUserList.add(apiUserOne);
 
-        ApiUser apiUserTwo = new ApiUser();
-        apiUserTwo.firstName = "Manish";
-        apiUserTwo.lastName = "Kumar";
-        apiUserList.add(apiUserTwo);
+            ApiUser apiUserOne = new ApiUser ();
+            apiUserOne.firstName = "Amit";
+            apiUserOne.lastName = "Shekhar";
+            apiUserList.add (apiUserOne);
 
-        ApiUser apiUserThree = new ApiUser();
-        apiUserThree.firstName = "Sumit";
-        apiUserThree.lastName = "Kumar";
-        apiUserList.add(apiUserThree);
+            ApiUser apiUserTwo = new ApiUser ();
+            apiUserTwo.firstName = "Manish";
+            apiUserTwo.lastName = "Kumar";
+            apiUserList.add (apiUserTwo);
+
+            ApiUser apiUserThree = new ApiUser ();
+            apiUserThree.firstName = "Sumit";
+            apiUserThree.lastName = "Kumar";
+            apiUserList.add (apiUserThree);
+        } catch (InterruptedException e) {
+
+        }
+
 
         return apiUserList;
     }
 
     public static List<User> convertApiUserListToUserList(List<ApiUser> apiUserList) {
 
-        List<User> userList = new ArrayList<>();
+        List<User> userList = new ArrayList<> ();
 
         for (ApiUser apiUser : apiUserList) {
-            User user = new User();
+            User user = new User ();
             user.firstName = apiUser.firstName;
             user.lastName = apiUser.lastName;
-            userList.add(user);
+            userList.add (user);
         }
 
         return userList;
@@ -71,19 +78,19 @@ public class Utils {
 
     public static List<User> getUserListWhoLovesCricket() {
 
-        List<User> userList = new ArrayList<>();
+        List<User> userList = new ArrayList<> ();
 
-        User userOne = new User();
+        User userOne = new User ();
         userOne.id = 1;
         userOne.firstName = "Amit";
         userOne.lastName = "Shekhar";
-        userList.add(userOne);
+        userList.add (userOne);
 
-        User userTwo = new User();
+        User userTwo = new User ();
         userTwo.id = 2;
         userTwo.firstName = "Manish";
         userTwo.lastName = "Kumar";
-        userList.add(userTwo);
+        userList.add (userTwo);
 
         return userList;
     }
@@ -91,30 +98,31 @@ public class Utils {
 
     public static List<User> getUserListWhoLovesFootball() {
 
-        List<User> userList = new ArrayList<>();
+        List<User> userList = new ArrayList<> ();
 
-        User userOne = new User();
+        User userOne = new User ();
         userOne.id = 1;
         userOne.firstName = "Amit";
         userOne.lastName = "Shekhar";
-        userList.add(userOne);
+        userList.add (userOne);
 
-        User userTwo = new User();
+        User userTwo = new User ();
         userTwo.id = 3;
         userTwo.firstName = "Sumit";
         userTwo.lastName = "Kumar";
-        userList.add(userTwo);
+        userList.add (userTwo);
 
         return userList;
     }
 
 
-    public static List<User> filterUserWhoLovesBoth(List<User> cricketFans, List<User> footballFans) {
-        List<User> userWhoLovesBoth = new ArrayList<User>();
+    public static List<User> filterUserWhoLovesBoth(List<User> cricketFans, List<User>
+            footballFans) {
+        List<User> userWhoLovesBoth = new ArrayList<User> ();
         for (User cricketFan : cricketFans) {
             for (User footballFan : footballFans) {
                 if (cricketFan.id == footballFan.id) {
-                    userWhoLovesBoth.add(cricketFan);
+                    userWhoLovesBoth.add (cricketFan);
                 }
             }
         }

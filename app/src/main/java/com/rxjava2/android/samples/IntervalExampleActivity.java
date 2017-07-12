@@ -32,6 +32,11 @@ public class IntervalExampleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(getIntent ()!=null){
+            Log.i (TAG,"----"+getIntent ());
+        }
+
         setContentView(R.layout.activity_example);
         btn = (Button) findViewById(R.id.btn);
         textView = (TextView) findViewById(R.id.textView);

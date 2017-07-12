@@ -10,9 +10,15 @@ import android.widget.TextView;
 import com.rxjava2.android.samples.model.Car;
 import com.rxjava2.android.samples.utils.AppConstant;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by amitshekhar on 30/08/16.
@@ -33,7 +39,9 @@ public class DeferExampleActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                doSomeWork();
+                //doSomeWork();
+
+                deferDemo ();
             }
         });
     }
@@ -88,6 +96,56 @@ public class DeferExampleActivity extends AppCompatActivity {
                 Log.d(TAG, " onComplete");
             }
         };
+    }
+
+
+
+    private void deferDemo(){
+        Observable.defer (new Callable<ObservableSource<? extends String>> () {
+            @Override
+            public ObservableSource<? extends String> call() throws Exception {
+                Log.i (TAG, "call: call()");
+                return Observable.just (getItem (1),getItem (2),getItem (3));
+            }
+        }).timeout(3, TimeUnit.SECONDS)//5s 检测有效网络
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe (new Observer<String> () {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Log.i (TAG,"onNext:"+s);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e (TAG,e.toString ());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i (TAG,"onComplete=====");
+                    }
+                });
+    }
+
+    private String getItem(int index){
+
+       long delay= index==1? 2000:(index==2? 7000:100);
+        try {
+            Log.i (TAG,"getItem:"+index);
+            Thread.sleep (delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace ();
+        }finally {
+
+        }
+
+        return "current no:"+index;
     }
 
 

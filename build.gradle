@@ -1,15 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://maven.fabric.io/public'}
         mavenCentral()
     }
     dependencies {
+        classpath 'io.fabric.tools:gradle:latest.integration'
+
         classpath 'com.android.tools.build:gradle:2.2.3'
 
         //java 6,7 +android 支持 java8 features
         classpath 'me.tatarka:gradle-retrolambda:3.4.0'
+
+        // test for AndResGuard
+        classpath ('com.tencent.mm:AndResGuard-gradle-plugin:1.1.16'){ changing = true}
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -17,13 +22,12 @@ buildscript {
 }
 
 //使得 java6，7 android 支持 java8 features 的 gralde 插件（第一种写法）
-//apply plugin: 'me.tatarka.retrolambda'
-
+apply plugin: 'me.tatarka.retrolambda'
 
 // alternatively, you can use the new plugin syntax for gradle 2.1+（第二种写法）
-plugins {
-    id "me.tatarka.retrolambda" version "3.4.0"
-}
+//plugins {
+//    id "me.tatarka.retrolambda" version "3.4.0"
+//}
 
 allprojects {
     repositories {
@@ -35,3 +39,4 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+

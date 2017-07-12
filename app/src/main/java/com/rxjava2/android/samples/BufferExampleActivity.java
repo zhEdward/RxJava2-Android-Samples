@@ -32,6 +32,8 @@ public class BufferExampleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_example);
         btn = (Button) findViewById(R.id.btn);
         textView = (TextView) findViewById(R.id.textView);
+       // textView.setBackgroundResource (R.mipmap.logo);
+
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
