@@ -101,11 +101,12 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.1.0'
     compile 'com.android.support:design:24.1.1'
     compile 'com.android.support:cardview-v7:24.1.0'
     compile 'com.android.support:recyclerview-v7:24.1.0'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.5'//2.0.2
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'//2.0.2
+
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     //除了添依赖库 还需要添加 特定注解处理器
@@ -116,6 +117,18 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     // JSON Converter retrofit 使用 gson解析器
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    //retrofit 支持 rx obserable<T> 方式请求
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+
+    //对于一些rom rxpermission 会没效果? 另外还有google 官方出品 EasyPermissions
+    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+
+    //jackOption set false otherwise gralde will interrupt by error
+   // compile 'com.trello.rxlifecycle2:rxlifecycle-android-lifecycle:2.1.0'
+
+    //logger 日志输出模块
+    compile 'com.orhanobut:logger:2.1.1'
+
 
 //    // Crashlytics Kit
 //    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
