@@ -58,14 +58,14 @@ android {
 
     signingConfigs {
         release {
-            try {
-                storeFile file("E:\\Google Drive\\Android\\Keystore\\Oops_edk_android_key")
-                storePassword "indexzero"
-                keyAlias "oops_android"
-                keyPassword "indexzero"
-            } catch (ex) {
-                throw new InvalidUserDataException(ex.toString())
-            }
+//            try {
+//                storeFile file("E:\\Google Drive\\Android\\Keystore\\Oops_edk_android_key")
+//                storePassword "indexzero"
+//                keyAlias "oops_android"
+//                keyPassword "indexzero"
+//            } catch (ex) {
+//                throw new InvalidUserDataException(ex.toString())
+//            }
         }
 
 //        debug {

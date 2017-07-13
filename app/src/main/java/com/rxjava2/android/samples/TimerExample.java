@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.rxjava2.android.samples.model.GithubBean;
+import com.rxjava2.android.samples.model.User;
 import com.rxjava2.android.samples.model.UserOrganationBean;
 import com.rxjava2.android.samples.utils.AppConstant;
 import com.rxjava2.android.samples.utils.GitHubService;
@@ -32,6 +34,8 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.R.id.list;
+
 /**
  * Created by amitshekhar on 27/08/16.
  */
@@ -45,7 +49,7 @@ public class TimerExample extends AppCompatActivity {
     ZhidianService zhidianService;
     Retrofit zhidianRetrofit;
 
-    ArrayAdapter<UserOrganationBean> arrayAdapter;
+    ArrayAdapter<GithubBean> arrayAdapter;//UserOrganationBean
 
 
     @Override
@@ -56,7 +60,7 @@ public class TimerExample extends AppCompatActivity {
         btn = (Button) findViewById (R.id.btn);
         textView = (TextView) findViewById (R.id.textView);
         lv = (ListView) findViewById (R.id.lv);
-        arrayAdapter = new ArrayAdapter<UserOrganationBean> (TimerExample.this, android.R.layout
+        arrayAdapter = new ArrayAdapter<GithubBean> (TimerExample.this, android.R.layout
                 .simple_list_item_1);
         lv.setAdapter (arrayAdapter);
 
@@ -74,7 +78,7 @@ public class TimerExample extends AppCompatActivity {
         //                .build();
 
         Retrofit retrofit = new Retrofit.Builder ().baseUrl ("https://api.github.com/")
-                .addConverterFactory (GsonConverterFactory.create ())
+                //.addConverterFactory (GsonConverterFactory.create ())
                 .build ();
 
         zhidianRetrofit = new Retrofit.Builder ().baseUrl ("https://https://www.jurengongchuang.com/Help/")
@@ -103,19 +107,28 @@ public class TimerExample extends AppCompatActivity {
         new Thread (new Runnable () {
             @Override
             public void run() {
-                Call<List<UserOrganationBean>> list = service.listOrgs ("JakeWharton");
+
                 try {
+//                    Call<List<UserOrganationBean>> list = service.listOrgs ("JakeWharton");
 //                    retrofit2.Response<List<UserOrganationBean>> response=list.execute ();
 //                    Log.i (TAG,"-----"+response);
-                    List<UserOrganationBean> l=list.execute ().body ();//会阻塞主线程
+      //              List<UserOrganationBean> l=list.execute ().body ();//会阻塞主线程
+
+                    
+
+                   User l =null;//=service.getProfile("zhEdward").execute().body();
+                    String str =service.getProfileRaw("daimajia").execute().body().string();
+                    Log.i(TAG, "run1: "+str);
+
                     runOnUiThread (new Runnable () {
                         @Override
                         public void run() {
                             if(l!=null){
                                 arrayAdapter.clear ();
-                                arrayAdapter.addAll (l);
+                               // arrayAdapter.addAll (l);
+                                arrayAdapter.add(l);
                                 arrayAdapter.notifyDataSetChanged ();
-                            }
+                            }else Log.i(TAG, "run: what the fuck");
 
                         }
                     });

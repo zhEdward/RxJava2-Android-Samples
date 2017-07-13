@@ -6,7 +6,7 @@ package com.rxjava2.android.samples.model;
  */
 
 /**获取某个用户所加入的组织*/
-public class UserOrganationBean {
+public class UserOrganationBean extends  GithubBean {
     private String login;
     private int id;
     private String url;
