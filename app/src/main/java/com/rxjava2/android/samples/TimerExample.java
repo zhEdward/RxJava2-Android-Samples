@@ -1,8 +1,11 @@
 package com.rxjava2.android.samples;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,14 +15,19 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.rxjava2.android.samples.model.GithubBean;
+import com.rxjava2.android.samples.model.MessageCodeBean;
 import com.rxjava2.android.samples.model.User;
 import com.rxjava2.android.samples.model.ZhiDianBean;
 import com.rxjava2.android.samples.utils.AppConstant;
 import com.rxjava2.android.samples.utils.GitHubService;
 import com.rxjava2.android.samples.utils.ZhidianService;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -29,9 +37,13 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.R.attr.bitmap;
 
 /**
  * Created by amitshekhar on 27/08/16.
@@ -90,7 +102,7 @@ public class TimerExample extends AppCompatActivity {
 
 
         Toolbar myToolbar = (Toolbar) findViewById (R.id.my_toolbar);
-        Log.i (TAG, "=====" + myToolbar);
+       // Log.i (TAG, "=====" + myToolbar);
         setSupportActionBar (myToolbar);
 
         //        ActionBar ab = getSupportActionBar ();
@@ -102,7 +114,7 @@ public class TimerExample extends AppCompatActivity {
 
     String str;
     User l = null;
-    ZhiDianBean zhidianBean;
+    MessageCodeBean messageCode;
 
     @OnClick(R.id.retrofitTest)
     public void testRetrofit() {
@@ -124,7 +136,16 @@ public class TimerExample extends AppCompatActivity {
                     //                     str =service.getProfileRaw("daimajia").execute().body
                     // ().string();
 
-                    zhidianBean = zhidianService.sendCode ("18650708764", 0).execute ().body ();
+                    retrofit2.Response<MessageCodeBean> re =zhidianService.sendCode ("18650708764", 0).execute ();
+
+                    if(re.code()==200){
+                        if(re.body()!=null){
+                            messageCode = re.body ();
+                        }
+                    }else {
+                        Log.i(TAG, "err body:"+re.errorBody().string());
+                    }
+
 
                     runOnUiThread (new Runnable () {
                         @Override
@@ -135,14 +156,17 @@ public class TimerExample extends AppCompatActivity {
                                 arrayAdapter.add (l);
                             }
 
-                            if (zhidianBean != null) {
-                                arrayAdapter.add (zhidianBean);
+                            if (messageCode != null) {
+                                arrayAdapter.add (messageCode);
+                            }else {
+                                Log.e(TAG, "run: message is null" );
                             }
 
                         }
                     });
                 } catch (IOException e) {
-                    e.printStackTrace ();
+                    Log.e(TAG, "run: "+e.getMessage());
+
                 }
             }
         });//.start ();
@@ -174,6 +198,12 @@ public class TimerExample extends AppCompatActivity {
         //        });
 
 
+        //testRx();
+        uploadFile();
+    }
+
+
+    private void testRx(){
         //rxjava + retrofit 请求 发送短信验证码
         zhidianService.sendVertifyCode ("18650708764", 0).subscribeOn (Schedulers.newThread ())
                 .observeOn (AndroidSchedulers.mainThread ()).subscribe (new Observer<ZhiDianBean>
@@ -187,19 +217,28 @@ public class TimerExample extends AppCompatActivity {
 
             @Override
             public void onNext(ZhiDianBean zhiDianBean) {
-                String msg = "nothing";
-                if (zhiDianBean.getCode () == 0) {
-                    msg = zhiDianBean.toString ();
-                } else {
-                    msg = zhiDianBean.getMessage ();
+
+
+                if(zhiDianBean!=null){
+                    Log.i(TAG, "onNext: "+zhiDianBean.toString());
+                    //                String msg = "nothing";
+//                if (zhiDianBean.getCode () == 0) {
+//                    msg = zhiDianBean.toString ();
+//                } else {
+//                    msg = zhiDianBean.getMessage ();
+//                }
+//                Log.i (TAG, "accept: " + msg);
+                    arrayAdapter.add (zhiDianBean);
+                }else {
+                    Log.e(TAG, "onNext-null obj: ");
                 }
-                Log.i (TAG, "accept: " + msg);
-                arrayAdapter.add (zhiDianBean);
+
+
             }
 
             @Override
             public void onError(Throwable e) {
-
+                Log.e(TAG, "onError: "+e.toString());
             }
 
             @Override
@@ -207,9 +246,75 @@ public class TimerExample extends AppCompatActivity {
 
             }
         });
-
-
     }
+
+
+    private void uploadFile(){
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+
+
+
+        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        Log.i(TAG, "uploadFile: "+encoded);
+
+
+        Map map =new HashMap<String,Object>();
+        map.put("projId",8888);
+        map.put("title","android-debug-img");
+        map.put("token","debug");
+        map.put("img",new String[]{encoded,encoded});
+        zhidianService.saveImg(map)
+
+
+
+        //zhidianService.saveImg("8888","android-debug-img",encoded,"debug")
+
+
+
+                .subscribeOn (Schedulers.newThread ())
+                .observeOn (AndroidSchedulers.mainThread ()).subscribe (new Observer<ResponseBody>
+                () {
+
+
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(ResponseBody bean) {
+                String s="";
+                if(bean!=null){
+                    try {
+                            s =new String(bean.bytes());
+                    }   catch (Exception e){
+
+                    }
+
+                }
+
+                Log.i(TAG, "upload-onNext: "+bean+"--"+s);
+
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e(TAG, "upload-onError: "+e.toString());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -16,42 +16,14 @@ package com.rxjava2.android.samples.model;
  */
 
 public class ZhiDianBean extends  GithubBean {
-    /**
-     * code : 20006
-     * message : 手机号码格式有误
-     * result : 1
-     */
 
-    private int code;
-    private String message;
-    private String result;
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
+    String s1 ;
+    String s2;
+    String s3;
 
     @Override
     public String toString() {
-        return code+":"+message+"****"+result;
+        return "s1:"+s1+",s2:"+s2;
     }
 }
